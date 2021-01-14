@@ -1,0 +1,41 @@
+.Toolbar {
+    height: 56px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #703b09;
+    display: flex; /* this makes the elements to be one next to each other*/
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box; /*toolbar is sized correctly even with the toolbar */
+    z-index: 90;
+    color: #fff;
+}
+
+.Toolbar nav {
+    height: 100%;
+}
+
+.Logo {
+    height: 80%;
+}
+
+.MobileOnly {
+    display: none;
+}
+
+
+@media (max-width: 499px)
+{
+    .DesktopOnly {
+        display: none;
+    }
+
+    .MobileOnly {
+        display: block;
+    }
+}
+
+
