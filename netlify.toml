@@ -1,0 +1,4 @@
+[build]
+base = "burger-builder/
+publish = "burger-builder/build/"
+command = "npm run build"
