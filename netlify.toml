@@ -1,4 +1,4 @@
 [build]
-base = "burger-builder/
+base = "burger-builder/"git 
 publish = "burger-builder/build/"
 command = "npm run build"
