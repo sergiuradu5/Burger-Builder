@@ -27,7 +27,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
         //The interceptors are leaking memory, occupying unnecessary memory, hence we need to dispose them
         componentWillUnmount() {
             axios.interceptors.request.eject(this.reqInterceptor);
-            // axios.interceptors.resoponse.eject(this.resInterceptor);
+            axios.interceptors.response.eject(this.resInterceptor);
         }
 
         errorConfirmedHandler = () => {

@@ -12,8 +12,8 @@ const NavigationItems = () => {
 
     return (
     <ul className={classes.NavigationItems}>
-        <NavigationItem link="/burger" active={active} onClick={switchActiveState}>Burger Builder</NavigationItem>
-        <NavigationItem link="/my-orders" active={!active} onClick={switchActiveState}>My Orders</NavigationItem>
+        <NavigationItem link="/burger"  onClick={switchActiveState}>Burger Builder</NavigationItem>
+        <NavigationItem link="/orders" onClick={switchActiveState}>My Orders</NavigationItem>
     </ul>
     );
 };

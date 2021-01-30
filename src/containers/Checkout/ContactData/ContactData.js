@@ -22,7 +22,7 @@ class ContactData extends PureComponent {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
       customer: {
-        name: this.state,
+        name: "Sergiu",
         address: {
           street: "JNA 91",
           zipCode: "26216",
