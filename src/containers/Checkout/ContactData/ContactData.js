@@ -1,11 +1,16 @@
 import React, { PureComponent } from "react";
+import { useFormik } from 'formik';
+
 import axios from "../../../axios-orders";
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import classes from "./ContactData.module.css";
 import Input from "../../../components/UI/Input/Input";
 import jsConfigForm from "../../../helpers/JSConfigForm/JSConfigForm";
+//Experimenting with formik form
+import FormikContactData from './FormikContactData/FormikContactData';
 class ContactData extends PureComponent {
+
   state = {
     orderForm: {
         name: {
@@ -162,7 +167,8 @@ class ContactData extends PureComponent {
     return (
     <div className={classes.ContactData}>
         <h4>Enter your Contact Data</h4>
-        {form}
+        {/* {form} */}
+        <FormikContactData />
     </div>
     );
   }
