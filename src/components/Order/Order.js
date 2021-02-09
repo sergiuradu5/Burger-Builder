@@ -20,17 +20,7 @@ const Order = (props) => {
         key={ig.ingredient}>{ig.ingredient}: {ig.amount} </span>
     }); 
 
-    // if(props.ingredients) {
-    //     Object.keys(props.ingredients)
-    //         .map(key => {
-    //             let ingredient = String(key);
-    //             ingredient = ingredient[0].toUpperCase() + ingredient.slice(1);
-    //             let amount = props.ingredients[key].toString();
-    //             ingredients += `${ingredient}: ${amount}, `;
-    //             return null;
-    //         })
-    //     ingredients = ingredients.slice(0, ingredients.length-2);
-    // }
+    
     return (
         <div className={classes.Order}>
             <p>Ingredients: {ingredientsOutput}</p>

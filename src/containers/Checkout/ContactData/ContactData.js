@@ -1,11 +1,11 @@
 import React, { PureComponent } from "react";
-
 import axios from "../../../axios-orders";
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import classes from "./ContactData.module.css";
 import Input from "../../../components/UI/Input/Input";
 import jsConfigForm from "../../../helpers/JSConfigForm/JSConfigForm";
+import {connect} from 'react-redux';
 class ContactData extends PureComponent {
   state = {
     orderForm: {
@@ -86,8 +86,8 @@ class ContactData extends PureComponent {
 
     this.setState({ loading: true });
     const order = {
-      ingredients: this.props.ingredients,
-      price: this.props.totalPrice.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
+      ingredients: this.props.ings,
+      price: this.props.price.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
       orderData: formData
     };
 
@@ -169,4 +169,11 @@ class ContactData extends PureComponent {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state) => {
+  return {
+    ings : state.ingredients,
+    price: state.totalPrice
+  }
+}
+
+export default connect(mapStateToProps)(ContactData);
