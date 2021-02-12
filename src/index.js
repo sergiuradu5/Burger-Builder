@@ -4,12 +4,32 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
-
+import thunk from 'redux-thunk';
 import {Provider} from 'react-redux';
-import {createStore } from 'redux';
-import reducer from './store/reducer';
+import {createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import burgerBuilderReducer from './store/reducers/burgerBuilder';
+import orderReducer from './store/reducers/order';
 
-const store = createStore(reducer);
+
+const rootReducer = combineReducers({ //Combining the 2 reducers
+  burgerBuilder: burgerBuilderReducer,
+  order: orderReducer
+});
+
+const logger = store => {
+  return (next) => {
+    return action => {
+      console.log('[Middleware] Dispathicng: ', action);
+      const result =  next(action);
+      console.log('[Middleware] next state: ', store.getState());
+      return result;
+    }
+  }
+};
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
 
 const app = (
   <Provider store={store}>
@@ -18,6 +38,8 @@ const app = (
     </BrowserRouter>
   </Provider>
 );
+
+
 
 ReactDOM.render(
   <React.StrictMode>

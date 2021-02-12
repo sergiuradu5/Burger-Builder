@@ -1,21 +1,36 @@
-import * as actionTypes from './actions';
-import ingredientPrices from './ingredientPrices';
+import * as actionTypes from '../actions/actionTypes';
+import ingredientPrices from '../ingredientPrices';
 
 
 const initialState = {
-    ingredients: {
-        salad: 0,
-        tomato: 0,
-        cheese: 0,
-        bacon: 0,
-        meat: 0
-    },
-    totalPrice: 4
+    ingredients: null,
+    totalPrice: 4,
+    error: false
 };
 
 const reducer = (state=initialState, action) => {
     // eslint-disable-next-line default-case
     switch(action.type) {
+
+        case actionTypes.SET_INGREDIENTS :
+            return {
+                ...state,
+                ingredients: {
+                    salad: action.ingredients.salad,
+                    tomato: action.ingredients.tomato,
+                    bacon: action.ingredients.bacon,
+                    cheese: action.ingredients.cheese,
+                    meat: action.ingredients.meat
+                },
+                error: false
+            }
+
+        case actionTypes.FETCH_INGREDIENTS_FAILED :
+            return {
+                ...state,
+                error: true
+            }
+
         case actionTypes.ADD_INGREDIENT : 
             return {
                 ...state,

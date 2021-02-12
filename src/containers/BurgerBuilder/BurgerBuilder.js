@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import axios from '../../axios-orders';
 
 import {connect} from 'react-redux';
-import * as actionTypes from '../../store/actions';
+import * as actionCreators from '../../store/actions/index';
+
 import Auxilary from '../../hoc/Auxiliary/Auxiliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
@@ -11,7 +12,7 @@ import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
-
+ 
 class BurgerBuilder extends Component {
     // constructor(props) {
     //     super(props);
@@ -19,13 +20,12 @@ class BurgerBuilder extends Component {
     // }
     state = {
         purchasing: false,
-        loading: false,
-        error: false
     }
 
-    componentDidMount() {
-        /* We no longer want to get the available ingredients asynchronously from the firebase server, 
-        We will make it a bit simpler, because we first want to implement redux into our Burger-Builder App*/
+    componentWillMount() {
+        /* We now want to retreive the ingredients asynchronously from the firebase server, 
+        within the Action Creators by using redux thunk */
+        this.props.onInitIngredients();
         // axios.get('https://react-burger-builder-svr-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json')
         //     .then(response => {
         //         this.setState({ingredients: response.data});
@@ -33,6 +33,7 @@ class BurgerBuilder extends Component {
         //     .catch(error => {
         //         this.setState({error: true});
         //     });
+
     }
 
     updatePurchaseState () {
@@ -78,7 +79,7 @@ class BurgerBuilder extends Component {
 
         /*Until the ingredients are retreived from the backend, 
         we are displaying a Spinner for the components using this.state.ingredients*/
-        let burger = this.state.error ? <h2 style={{textAlign: 'center'}}>Ingredients Can't Be loaded</h2> : <Spinner />;
+        let burger = this.props.error ? <h2 style={{textAlign: 'center'}}>Ingredients Can't Be loaded</h2> : <Spinner />;
         if (this.props.ings) { 
             burger = (
                 <Auxilary>
@@ -99,9 +100,7 @@ class BurgerBuilder extends Component {
             purchaseContinued={this.purchaseContinueHandler} />
         }
         /*****/
-        if(this.state.loading) {
-            orderSummary = <Spinner />
-        }
+        
 
         
         return (
@@ -117,15 +116,18 @@ class BurgerBuilder extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        ings: state.ingredients,
-        price: state.totalPrice
+        ings: state.burgerBuilder.  ingredients,
+        price: state.burgerBuilder.totalPrice,
+        error: state.burgerBuilder.error
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onIngredientAdded: (ingredientName) => dispatch({type: actionTypes.ADD_INGREDIENT, ingredientName: ingredientName }),
-        onIngredientRemoved: (ingredientName) => dispatch({type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingredientName })
+        onIngredientAdded: (ingredientName) => dispatch(actionCreators.addIngredient(ingredientName)),
+        onIngredientRemoved: (ingredientName) => dispatch(actionCreators.removeIngredient(ingredientName)),
+        onInitIngredients: () => dispatch(actionCreators.initIngredients())
+        
     }
 }
 
