@@ -22,22 +22,14 @@ class BurgerBuilder extends Component {
         purchasing: false,
     }
 
-    componentWillMount() {
+    componentDidMount() {
         /* We now want to retreive the ingredients asynchronously from the firebase server, 
         within the Action Creators by using redux thunk */
         this.props.onInitIngredients();
-        // axios.get('https://react-burger-builder-svr-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json')
-        //     .then(response => {
-        //         this.setState({ingredients: response.data});
-        //     })
-        //     .catch(error => {
-        //         this.setState({error: true});
-        //     });
-
+        this.props.onFetchIngredientPrices();
     }
 
     updatePurchaseState () {
-        
         const sum = Object.keys( this.props.ings )
             .map( igKey => {
                 return this.props.ings[igKey];
@@ -58,7 +50,7 @@ class BurgerBuilder extends Component {
     }
 
     purchaseContinueHandler = () => {        
-       
+        this.props.onInitPurchase();
         this.props.history.push('/checkout');
     }
 
@@ -126,7 +118,9 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onIngredientAdded: (ingredientName) => dispatch(actionCreators.addIngredient(ingredientName)),
         onIngredientRemoved: (ingredientName) => dispatch(actionCreators.removeIngredient(ingredientName)),
-        onInitIngredients: () => dispatch(actionCreators.initIngredients())
+        onInitIngredients: () => dispatch(actionCreators.initIngredients()),
+        onFetchIngredientPrices: () => dispatch(actionCreators.fetchIngredientPrices()),
+        onInitPurchase : () => dispatch(actionCreators.purchaseInit())
         
     }
 }

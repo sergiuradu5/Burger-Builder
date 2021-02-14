@@ -39,3 +39,29 @@ export const initIngredients = () => {
                     })
     };
 };
+
+export const fetchIngredientPricesFailed = (error) => {
+    return {
+        type: actionTypes.FETCH_INGREDIENT_PRICES_FAILED,
+        error: error
+    }
+}
+
+export const fetchIngredientPricesSuccess = (prices) => {
+    return {
+        type: actionTypes.FETCH_INGREDIENT_PRICES_SUCCESS,
+        prices: prices
+    }
+}
+
+export const fetchIngredientPrices = () => {
+    return dispatch => {
+        axios.get('/prices.json')
+            .then( response => {
+                dispatch(fetchIngredientPricesSuccess(response.data));
+            })
+            .catch(error => {
+                dispatch(fetchIngredientPricesFailed(error));
+            })
+    }
+}
