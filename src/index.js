@@ -18,16 +18,6 @@ const rootReducer = combineReducers({ //Combining the 2 reducers
   auth: authReducer
 });
 
-const logger = store => {
-  return (next) => {
-    return action => {
-      console.log('[Middleware] Dispathicng: ', action);
-      const result =  next(action);
-      console.log('[Middleware] next state: ', store.getState());
-      return result;
-    }
-  }
-};
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
