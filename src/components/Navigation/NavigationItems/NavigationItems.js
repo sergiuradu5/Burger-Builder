@@ -1,21 +1,40 @@
-import React, {useState, useCallback} from 'react';
+import React  from 'react';
+import {connect} from 'react-redux';
 
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
+
+import * as actionCreators from '../../../store/actions/index';
+
+const NavigationItems = (props) => {
     
-const NavigationItems = () => {
-    const [active, setActive] = useState(true);
-    const switchActiveState = useCallback(() => {
-        setActive(!active);
-        console.log(active);
-    }, [active]);
+
+    
+
+    let authenticatedNavItem = <NavigationItem link="/auth">Authenticate</NavigationItem>; 
+    if(props.isAuthenticated) {
+        authenticatedNavItem = <NavigationItem link="/logout" >Log Out</NavigationItem>
+    }
 
     return (
     <ul className={classes.NavigationItems}>
-        <NavigationItem link="/burger"  onClick={switchActiveState}>Burger Builder</NavigationItem>
-        <NavigationItem link="/orders" onClick={switchActiveState}>My Orders</NavigationItem>
+        <NavigationItem link="/burger" >Burger Builder</NavigationItem>
+        {props.isAuthenticated ? <NavigationItem link="/orders">My Orders</NavigationItem> : null}
+        {authenticatedNavItem}
     </ul>
     );
 };
 
-export default NavigationItems;
+const mapStateToProps = (state) => {
+    return {
+        token: state.auth.token
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        onLogout: () => dispatch(actionCreators.logout())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NavigationItems);

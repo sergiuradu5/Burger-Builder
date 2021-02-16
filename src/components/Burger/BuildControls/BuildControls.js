@@ -25,7 +25,7 @@ const BuildControls = (props) => {
                 key={ctrl.label} 
                 label={ctrl.label}
                 added={() => props.ingredientAdded(ctrl.type)}
-                removed={() => props.ingredientRemoved(ctrl.type)}
+                removed={() => props.ingredientRemoved(ctrl.type)} 
                 disabled={props.disabled[ctrl.type]} />
         ))}
         <button 
@@ -35,7 +35,7 @@ const BuildControls = (props) => {
                 props.ordered();
                 playBlopSound();
 
-            }}>ORDER NOW</button>
+            }}>{props.isAuth ? 'ORDER NOW' : 'SIGN IN TO ORDER'}</button>
     </div>
     );
 };

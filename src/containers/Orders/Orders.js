@@ -11,7 +11,7 @@ class Orders extends Component {
     componentDidMount() {
         //GET Request for orders.json in firebase
         //...via the action creator inside actions/order.js
-        this.props.onFetchOrders();
+        this.props.onFetchOrders(this.props.token);
         
     }
 
@@ -38,13 +38,14 @@ class Orders extends Component {
 const mapStateToProps = (state) => {
     return {
         loading: state.order.loading,
-        orders: state.order.orders
+        orders: state.order.orders,
+        token: state.auth.token
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onFetchOrders: () => dispatch(actionCreators.fetchOrders())
+        onFetchOrders: (token) => dispatch(actionCreators.fetchOrders(token))
     }
 }
 

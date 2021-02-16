@@ -9,11 +9,13 @@ import {Provider} from 'react-redux';
 import {createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import burgerBuilderReducer from './store/reducers/burgerBuilder';
 import orderReducer from './store/reducers/order';
+import authReducer from './store/reducers/auth';
 
 
 const rootReducer = combineReducers({ //Combining the 2 reducers
   burgerBuilder: burgerBuilderReducer,
-  order: orderReducer
+  order: orderReducer,
+  auth: authReducer
 });
 
 const logger = store => {

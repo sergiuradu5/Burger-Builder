@@ -6,7 +6,8 @@ const initialState = {
     ingredients: null,
     totalPrice: 4,
     error: false,
-    ingredientPrices: null
+    ingredientPrices: null,
+    building: false
 };
 
 const reducer = (state=initialState, action) => {
@@ -23,7 +24,8 @@ const reducer = (state=initialState, action) => {
                     meat: action.ingredients.meat
                 },
                 error: false,
-                totalPrice  : 4
+                totalPrice  : 4,
+                building: false
             })
 
         case actionTypes.FETCH_INGREDIENTS_FAILED :
@@ -35,7 +37,8 @@ const reducer = (state=initialState, action) => {
                     ...state.ingredients,
                     [action.ingredientName] : state.ingredients[action.ingredientName] + 1
                     },
-                totalPrice: state.totalPrice + state.ingredientPrices[action.ingredientName]
+                totalPrice: state.totalPrice + state.ingredientPrices[action.ingredientName],
+                building: true
             }
             return updateObject(state, updatedProperties);
 
@@ -45,12 +48,16 @@ const reducer = (state=initialState, action) => {
                     ...state.ingredients,
                     [action.ingredientName] : state.ingredients[action.ingredientName] - 1
                 },
-                totalPrice: state.totalPrice - state.ingredientPrices[action.ingredientName]
+                totalPrice: state.totalPrice - state.ingredientPrices[action.ingredientName],
+                building: true
             }
             return updateObject(state, updatedProperties1);
 
         case actionTypes.FETCH_INGREDIENT_PRICES_SUCCESS:
             return updateObject(state, {ingredientPrices: action.prices});
+        
+        case actionTypes.FETCH_INGREDIENT_PRICES_FAILED:
+            return updateObject(state, null);
     }
     return state;
 }

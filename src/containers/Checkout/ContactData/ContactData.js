@@ -8,7 +8,7 @@ import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import jsConfigForm from "../../../helpers/JSConfigForm/JSConfigForm";
-
+import {validateEmail} from '../../../helpers/validateEmail/validateEmail';
 import {connect} from 'react-redux';
 import * as actionCreators from '../../../store/actions/index';
 
@@ -30,7 +30,20 @@ class ContactData extends PureComponent {
           touched: false
         },
         surname: jsConfigForm("input", "text", "Your Surname", "", "required"),
-        email: jsConfigForm("input", "email", "Your E-mail", "", "required"),
+        email: {
+          elementType: 'input',
+          elementConfig: {
+            type: 'email',
+            placeholder: 'Email Address'
+          },
+          value: '',
+          validation: {
+            required: true, 
+            isEmail: true
+          },
+          valid: false,
+          touched: false
+        },
         country: jsConfigForm("input", "text", "Your Country", "", "required"),
         address: jsConfigForm("input", "text", "Street Address", "", "required"),
         postalCode: {
@@ -79,6 +92,10 @@ class ContactData extends PureComponent {
     if (rules.maxLength) {
       isValid = (value.length <= rules.maxLength) && isValid;
     }
+
+    if (rules.isEmail) {
+      isValid = validateEmail(value) && isValid;
+  }
     return isValid;
   }
 
@@ -97,7 +114,7 @@ class ContactData extends PureComponent {
       orderData: formData
     };
 
-    this.props.onOrderBurger(order);
+    this.props.onOrderBurger(order, this.props.token);
 
     
   };
@@ -171,13 +188,14 @@ const mapStateToProps = (state) => {
   return {
     ings : state.burgerBuilder.ingredients,
     price: state.burgerBuilder.totalPrice,
-    loading: state.order.loading
+    loading: state.order.loading,
+    token: state.auth.token
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onOrderBurger : (orderData) => dispatch(actionCreators.purchaseBurger(orderData))
+    onOrderBurger : (orderData, token) => dispatch(actionCreators.purchaseBurger(orderData, token))
   }
 }
 
