@@ -6,7 +6,7 @@ This project was a follow-along coding practice for the React -The Complete Guid
 
 ✔️ Easily Build a Custom Burger With The Burger Building Interface \
 ✔️ Order Your Delicious Burger \
-✔️ Access All Your Previous Orders \
+✔️ Access All Your Previous Orders 
 
 ## Implemented Techniques / Libraries / Principles
 
@@ -20,5 +20,5 @@ Over the duration of this complete course for React.js I have learned the follow
 • Creating Forms, Implementing Validation - Both Manually, And Using Thrid-Party Libraries Such As `formik` & `yup` \
 • Basic `redux` And Some Advanced Uses, Like Applying Middleware (`redux devtools`), Handling Async Code (`redux thunk`) \
 • Authentication In SPA Via Tokens \
-• Testing \ 
-• Deployment \
+• Testing \
+• Deployment
