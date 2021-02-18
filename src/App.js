@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 
 import {connect} from 'react-redux';
@@ -7,10 +7,15 @@ import * as actions from './store/actions/index';
 
 import Layout from './hoc/Layout/Layout';
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
-import Checkout from './containers/Checkout/Checkout';
-import Orders from './containers/Orders/Orders';
-import Auth from './containers/Auth/Auth';
+
 import Logout from './containers/Auth/Logout/Logout';
+import Spinner from './components/UI/Spinner/Spinner';
+
+const Checkout = React.lazy( () => import('./containers/Checkout/Checkout'));
+const Auth = React.lazy( () => import ('./containers/Auth/Auth'));
+const Orders = React.lazy( () => import ('./containers/Orders/Orders'));
+
+
 class App extends Component {
 
   componentDidMount() {
@@ -21,11 +26,25 @@ class App extends Component {
   render () {
 
     let routes = ( //for Authenticated users
+      // <Suspense /> Used here for asynchronous (lazy) loading of the componentes
           <Switch>
             <Route path="/burger" component={BurgerBuilder} />
-            <Route path="/checkout" component={Checkout} />
-            <Route path="/orders" component={Orders} />
-            <Route path="/logout" component={Logout} /> 
+            <Route path="/checkout" render={() => (
+              <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
+                <Checkout />
+              </Suspense>
+            )} />
+            <Route path="/orders" render={() => (
+              <Suspense fallback={<div> </div>}>
+                <Orders />
+              </Suspense>
+            )} />
+            <Route path="/logout" component={Logout} />
+            <Route path="/auth" render={() => (
+              <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
+                <Auth />
+              </Suspense>
+            )} />
             <Redirect path="/" to="/burger" />
           </Switch>
     )
@@ -34,7 +53,11 @@ class App extends Component {
       routes = ( //for Unauthenticated users
         <Switch>
             <Route path="/burger" component={BurgerBuilder} />
-            <Route path="/auth" component={Auth} />  
+            <Route path="/auth" render={() => (
+              <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
+                <Auth />
+              </Suspense>
+            )} />
             <Redirect path="/" to="/burger" />
           </Switch>
       )

@@ -3,14 +3,17 @@ import classes from "./ContactData.module.css";
 
 import axios from "../../../axios-orders";
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import {updateObject} from '../../../helpers/utility/utility';
 
 import Button from "../../../components/UI/Button/Button";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import Input from "../../../components/UI/Input/Input";
 import jsConfigForm from "../../../helpers/JSConfigForm/JSConfigForm";
-import {validateEmail} from '../../../helpers/validateEmail/validateEmail';
+import {checkValidity} from '../../../helpers/utility/utility';
 import {connect} from 'react-redux';
 import * as actionCreators from '../../../store/actions/index';
+
+
 
 
 class ContactData extends PureComponent {
@@ -76,28 +79,7 @@ class ContactData extends PureComponent {
     formIsValid: false,
   };
 
-  checkValidity(value, rules) {
-    let isValid  = true;
-    
-    if (rules.required) {
-      isValid = (value.trim() !== '') && isValid; //it IS VALID if value.trim() ISN'T EMPTY
-    } else if (rules.required===undefined) {
-      isValid = true;
-    }
-
-    if (rules.minLength) {
-      isValid = (value.length >= rules.minLength) && isValid;
-    }
-
-    if (rules.maxLength) {
-      isValid = (value.length <= rules.maxLength) && isValid;
-    }
-
-    if (rules.isEmail) {
-      isValid = validateEmail(value) && isValid;
-  }
-    return isValid;
-  }
+  
 
   orderHandler = (event) => {
     event.preventDefault();
@@ -112,7 +94,8 @@ class ContactData extends PureComponent {
       ingredients: this.props.ings,
       price: this.props.price.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
       orderData: formData,
-      userId: this.props.userId
+      userId: this.props.userId,
+      date: new Date()
     };
 
     this.props.onOrderBurger(order, this.props.token);
@@ -121,18 +104,17 @@ class ContactData extends PureComponent {
   };
 
   inputChangedHandler = (event, inputIdentifier) => {
-     const updatedOrderForm = { //The nested objects are NEVER deeply copied with the ...(spread) operator
-       ...this.state.orderForm
-     };
-     const updatedFormElement = {
-       ...updatedOrderForm[inputIdentifier]
-     };
-     updatedFormElement.value = event.target.value;
-     updatedFormElement.touched = true;
      
-     updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation)
+     const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+        value: event.target.value,
+        valid: checkValidity(event.target.value, this.state.orderForm[inputIdentifier].validation),
+        touched:  true
+     });
+
+     const updatedOrderForm = updateObject(this.state.orderForm, {
+       [inputIdentifier]: updatedFormElement
+     });
      
-     updatedOrderForm[inputIdentifier] = updatedFormElement;
      
      let formIsValid = true;
      for (let inputIdentifier in updatedOrderForm)

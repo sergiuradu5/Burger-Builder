@@ -24,6 +24,7 @@ class Orders extends Component {
                      <Order key={object.id}
                             ingredients={object.ingredients}
                             price={object.price}
+                            date={object.date}
                     />
                     )})
         }

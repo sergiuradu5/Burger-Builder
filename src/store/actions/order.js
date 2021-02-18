@@ -29,7 +29,6 @@ export const purchaseBurger = (orderData, token, ) => {
        dispatch(purchaseBurgerStart());
         axios.post('orders.json?auth=' + token, orderData)
             .then(response => {
-                console.log(response.data);
                 dispatch(purchaseBurgerSuccess(response.data.name, orderData));
             })
             .catch(error => {
@@ -45,9 +44,11 @@ export const purchaseInit = () => {
 }
 
 export const fetchOrdersSuccess = (orders) => {
+    //Sorting the orders, from the latest, to the oldest order
+    const sortedOrders = orders.sort((a, b) => new Date(b.date) -new Date(a.date));
     return {
         type: actionTypes.FETCH_ORDERS_SUCCESS,
-        orders: orders
+        orders: sortedOrders
     }
 }
 

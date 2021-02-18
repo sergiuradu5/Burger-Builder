@@ -19,12 +19,16 @@ const Order = (props) => {
         }}
         key={ig.ingredient}>{ig.ingredient}: {ig.amount} </span>
     }); 
-
+    
+    const date=new Date(props.date);
+    const dateOutput = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
+   
     
     return (
         <div className={classes.Order}>
             <p>Ingredients: {ingredientsOutput}</p>
             <p>Price: <strong>${props.price}</strong></p>
+            <p>Date: <strong>{dateOutput}</strong></p>
         </div>
     );
 }

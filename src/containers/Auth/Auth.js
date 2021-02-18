@@ -5,8 +5,7 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import classes from './Auth.module.css';
 import {Redirect} from 'react-router-dom';
 
-
-import {validateEmail} from '../../helpers/validateEmail/validateEmail';
+import {updateObject, checkValidity} from '../../helpers/utility/utility';
 
 import {connect} from 'react-redux';
 
@@ -48,49 +47,39 @@ class Auth extends PureComponent {
         isSignup: true
     };
 
+    checkForEmptyIngredients = () => {
+        let sumOfElements = 0;
+       for (const [key] of Object.entries(this.props.ingredients)) {
+            sumOfElements += this.props.ingredients[key];
+       }
+       return sumOfElements > 0;
+    }
+
     componentDidMount() {
         if (!this.props.building && this.props.authRedirectPath !== '/') {
             this.props.onSetAuthRedirectPath('/');
         }
+        if (this.props.building && this.props.ingredients !== null && this.checkForEmptyIngredients() && this.props.authRedirectPath === '/') {
+            //if we started building a burger, and the ingredients object is not null, nor empty, and the authRedirectPath is to homepage ('/', or '/burger', it's the same)
+            //make the authRedirectPath to '/checkout' because we have already started building a burger and we want to buy it
+            this.props.onSetAuthRedirectPath('/checkout');
+        }
     }
 
     inputChangedHandler = (event, controlName) => {
-        const updatedControls = {
-            ...this.state.controls,
-            [controlName] : {
-                ...this.state.controls[controlName],
+        const updatedControls = updateObject(this.state.controls, {
+            [controlName] : updateObject(this.state.controls[controlName], {
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
+                valid: checkValidity(event.target.value, this.state.controls[controlName].validation),
                 touched: true 
-            }
-        };
+                })
+        });
+        
         
         this.setState({controls: updatedControls});  
     }
 
-    checkValidity(value, rules) {
-        let isValid  = true;
-        
-        if (rules.required) {
-          isValid = (value.trim() !== '') && isValid; //it IS VALID if value.trim() ISN'T EMPTY
-        } else if (rules.required===undefined) {
-          isValid = true;
-        }
     
-        if (rules.minLength) {
-          isValid = (value.length >= rules.minLength) && isValid;
-        }
-    
-        if (rules.maxLength) {
-          isValid = (value.length <= rules.maxLength) && isValid;
-        }
-
-        if(rules.isEmail) {
-            isValid = validateEmail(value) && isValid;
-        }
-
-        return isValid;
-      }
 
     submitHandler = (event) => {
         event.preventDefault();
@@ -170,7 +159,8 @@ const mapStateToProps = (state) => {
         error: state.auth.error,
         isAuthenticated: state.auth.token !== null,
         building: state.burgerBuilder.building,
-        authRedirectPath: state.auth.authRedirectPath
+        authRedirectPath: state.auth.authRedirectPath,
+        ingredients: state.burgerBuilder.ingredients
     }
 }
 

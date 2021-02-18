@@ -19,7 +19,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
             this.resInterceptor = axios.interceptors.response.use(res => res, 
                 error => {
                     this.setState({error: error});
-                    console.log(error);
+                    
                 })
         }
         //We need componentWillUnmount because when we use the function withErrorHandler with many different pages inside the SPA,
