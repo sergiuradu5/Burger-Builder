@@ -206,7 +206,7 @@ class ContactData extends PureComponent {
     if (!this.state.resetClicked && this.state.autoCompleteClicked && this.props.previousContactData) {
       resetButton = <div>
       <button 
-            className={classes.OrderButton}
+            className={classes.Button}
             onClick={this.resetForm}>RESET</button>
         <h5>Click here if you want to reset and empty your form</h5>
     </div>
@@ -217,7 +217,7 @@ class ContactData extends PureComponent {
       autoCompleteButton = 
       <div>
         <button 
-            className={classes.OrderButton}
+            className={classes.Button}
             onClick={this.autoCompleteForm}>AUTO-COMPLETE</button>
         <h5>Click here if you want to auto-complete your order with your contact data from the previous order</h5>
     </div>
