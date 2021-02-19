@@ -4,7 +4,8 @@ import {connect} from 'react-redux';
 import * as actions from '../../../store/actions/index';
 class Logout extends PureComponent {
     componentDidMount() {
-        this.props.onLogout();
+        const auto = false;
+        this.props.onLogout(auto);
     }
 
     render() {
@@ -14,7 +15,7 @@ class Logout extends PureComponent {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLogout: () => dispatch(actions.logout())
+        onLogout: (auto) => dispatch(actions.logout(auto))
     }
 }
 

@@ -4,8 +4,6 @@ import {connect} from 'react-redux';
 import classes from './NavigationItems.module.css';
 import NavigationItem from './NavigationItem/NavigationItem';
 
-import * as actionCreators from '../../../store/actions/index';
-
 const NavigationItems = (props) => {
     
 
@@ -31,10 +29,5 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onLogout: () => dispatch(actionCreators.logout())
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(NavigationItems);
+export default connect(mapStateToProps)(NavigationItems);

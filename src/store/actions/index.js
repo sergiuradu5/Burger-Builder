@@ -17,3 +17,7 @@ export {
     setAuthRedirectPath,
     authCheckState
 } from './auth'
+
+export {
+    fetchUserContactDataStart
+} from './userContactData';

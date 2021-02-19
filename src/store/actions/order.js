@@ -1,7 +1,21 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
+import {ToastNotification} from '../../components/UI/ToastNotification/ToastNotification';
 
 export const purchaseBurgerSuccess = (id, orderData) => {
+    ToastNotification({
+        title: "Order Placed Successfuly",
+        message: " ",
+        type: "success",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
+    });
     return {
         type: actionTypes.PURCHASE_BURGER_SUCCESS,
         orderId: id,
@@ -10,6 +24,19 @@ export const purchaseBurgerSuccess = (id, orderData) => {
 };
 
 export const purchaseBurgerFailed = (error) => {
+    ToastNotification({
+        title: "Order Failed!",
+        message: " ",
+        type: "danger",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
+    });
     return {
         type: actionTypes.PURCHASE_BURGER_FAILED,
         error: error
@@ -73,6 +100,7 @@ export const fetchOrders = (token, userId) => {
             .then(response => {
                 const fetchedOrders = [];
                 for (let key in response.data) {
+                    console.log(response.data[key]);
                     fetchedOrders.push({
                         ...response.data[key],
                         id: key

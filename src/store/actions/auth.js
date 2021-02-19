@@ -1,34 +1,94 @@
 import * as actionTypes from './actionTypes';
 import axios from 'axios';
 import API_KEY from '../../helpers/APIKey/APIKey';
+
+import {ToastNotification} from '../../components//UI/ToastNotification/ToastNotification';
+
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
     };
 };
 
-export const authSuccess = (tokenId, userId) => {
-    return {
+
+export const authSuccess = (tokenId, userId, auto, method) => {
+    let authMessage = {
+        title: "Logged In",
+        message: "Welcome Back!"
+    };
+    if (auto === false) {
+
+        if(method === "signUp") {
+            authMessage['title'] = "Signed Up Successfuly";
+            authMessage['message'] = "Welcome!";
+        }
+
+        ToastNotification({
+            title: authMessage.title,
+            message: authMessage.message,
+            type: "success",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated", "animate__fadeIn"],
+            animationOut: ["animate__animated", "animate__fadeOut"],
+            dismiss: {
+              duration: 5000,
+              onScreen: true
+            }
+        });
+    }
+     return {
         type: actionTypes.AUTH_SUCCESS,
         tokenId: tokenId,
         userId: userId
     }
 }
+
 export const authFail = (error) => {
+    ToastNotification({
+        title: "Authentication Failed",
+        message: error,
+        type: "danger",
+        insert: "top",
+        container: "top-right",
+        animationIn: ["animate__animated", "animate__fadeIn"],
+        animationOut: ["animate__animated", "animate__fadeOut"],
+        dismiss: {
+          duration: 5000,
+          onScreen: true
+        }
+    });
+
     return {
         type: actionTypes.AUTH_FAIL,
         error: error
     }
 }
 
-export const logout = () => {
+export const logout = (auto) => {
     localStorage.removeItem('token');
     localStorage.removeItem('expirationDate');
     localStorage.removeItem('userId');
+    if (auto === false) {
+        ToastNotification({
+            title: "Logged Out",
+            message: " ",
+            type: "info",
+            insert: "top",
+            container: "top-right",
+            animationIn: ["animate__animated", "animate__fadeIn"],
+            animationOut: ["animate__animated", "animate__fadeOut"],
+            dismiss: {
+              duration: 5000,
+              onScreen: true
+            }
+        });
+    }
     return {
         type: actionTypes.AUTH_LOGOUT
     }
 }
+
 
 export const checkAuthTimeout = (expirationTime) => {
     return dispatch => {
@@ -56,10 +116,11 @@ export const auth = (email, password, method) => {
         axios.post(url, authData)
             .then(response => {
                 const expirationDate = new Date(new Date().getTime() + response.data.expiresIn * 1000); //3600 seconds converting to milliseconds
+                const auto = false;
                 localStorage.setItem('token', response.data.idToken);
                 localStorage.setItem('expirationDate', expirationDate);
                 localStorage.setItem('userId', response.data.localId);
-                dispatch(authSuccess(response.data.idToken, response.data.localId));
+                dispatch(authSuccess(response.data.idToken, response.data.localId, auto, method));
                 dispatch(checkAuthTimeout(response.data.expiresIn * 1000));
             })
             .catch(error => {
@@ -96,6 +157,7 @@ export const setAuthRedirectPath = (path) => {
 
 export const authCheckState = () => {
     return dispatch => {
+        const auto=true;
         const token = localStorage.getItem('token');
         if(!token) {
             dispatch(logout());
@@ -105,11 +167,11 @@ export const authCheckState = () => {
               if(expirationDate > new Date()) {
                 const userId = localStorage.getItem('userId');
                 
-                dispatch(authSuccess(token, userId));
+                dispatch(authSuccess(token, userId, auto));
                 dispatch(checkAuthTimeout(expirationDate.getTime() - new Date().getTime()));
                                     //both expirationDate and current Date have to be in milliseconds
               } else {
-                  dispatch(logout())
+                  dispatch(logout(auto))
               }
 
             

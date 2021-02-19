@@ -64,7 +64,9 @@ class App extends Component {
     }
 
     return (
+        
         <Layout>
+          
           {routes}
         </Layout>
         

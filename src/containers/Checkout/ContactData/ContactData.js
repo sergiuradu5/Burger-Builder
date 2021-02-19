@@ -14,8 +14,6 @@ import {connect} from 'react-redux';
 import * as actionCreators from '../../../store/actions/index';
 
 
-
-
 class ContactData extends PureComponent {
   state = {
     orderForm: {
@@ -77,9 +75,53 @@ class ContactData extends PureComponent {
         }
     },
     formIsValid: false,
+    resetClicked: false,
+    autoCompleteClicked: false,
   };
 
-  
+  componentDidMount() {
+    this.props.onFetchUserContactDataStart(
+      this.props.token,
+      this.props.userId
+    )
+  }
+
+  autoCompleteForm = () => {
+    const keys = Object.keys(this.state.orderForm);
+    let autoCompletedForm = {};
+      for (const key of keys){
+        console.log('This is key: ', key);
+        autoCompletedForm[key] = updateObject(this.state.orderForm[key], {
+        value: this.props.contactData[key],
+        valid: checkValidity(this.props.contactData[key], this.state.orderForm[key].validation),
+        touched:  true
+      });
+    }
+    
+    this.setState({
+      orderForm: autoCompletedForm,
+      autoCompleteClicked: true,
+      resetClicked: false
+    });
+  }
+
+  resetForm = () => {
+    const keys = Object.keys(this.state.orderForm);
+    let resetForm = {};
+      for (const key of keys){
+        console.log('This is key: ', key);
+        resetForm[key] = updateObject(this.state.orderForm[key], {
+        value: '',
+        valid: false,
+        touched:  false
+      });
+    }
+    this.setState({
+      orderForm: resetForm,
+      autoCompleteClicked: false,
+      resetClicked: true
+    });
+  }
 
   orderHandler = (event) => {
     event.preventDefault();
@@ -128,6 +170,8 @@ class ContactData extends PureComponent {
   }
 
   render() {
+    
+
     const formElementsArray = [];
     for (let key in this.state.orderForm) {
       formElementsArray.push({
@@ -158,9 +202,34 @@ class ContactData extends PureComponent {
         form = <Spinner />
     }
 
+    let resetButton = null;
+    if (!this.state.resetClicked && this.state.autoCompleteClicked && this.props.previousContactData) {
+      resetButton = <div>
+      <button 
+            className={classes.OrderButton}
+            onClick={this.resetForm}>RESET</button>
+        <h5>Click here if you want to reset and empty your form</h5>
+    </div>
+    }
+
+    let autoCompleteButton = null;
+    if (this.props.contactData && !this.state.autoCompleteClicked && this.props.previousContactData) {
+      autoCompleteButton = 
+      <div>
+        <button 
+            className={classes.OrderButton}
+            onClick={this.autoCompleteForm}>AUTO-COMPLETE</button>
+        <h5>Click here if you want to auto-complete your order with your contact data from the previous order</h5>
+    </div>
+
+    }
+
+
     return (
     <div className={classes.ContactData}>
-        <h4>Enter your Contact Data</h4>
+        <h4>Enter Your Contact Data</h4>
+      {autoCompleteButton}
+      {resetButton}
         {form}
     </div>
     );
@@ -173,13 +242,16 @@ const mapStateToProps = (state) => {
     price: state.burgerBuilder.totalPrice,
     loading: state.order.loading,
     token: state.auth.token,
-    userId : state.auth.userId
+    userId : state.auth.userId,
+    contactData: state.userContactData.contactData,
+    previousContactData: state.userContactData.contactData !== null
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onOrderBurger : (orderData, token) => dispatch(actionCreators.purchaseBurger(orderData, token))
+    onOrderBurger : (orderData, token) => dispatch(actionCreators.purchaseBurger(orderData, token)),
+    onFetchUserContactDataStart: (token, userId) => dispatch(actionCreators.fetchUserContactDataStart(token, userId))
   }
 }
 

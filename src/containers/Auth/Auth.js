@@ -44,7 +44,8 @@ class Auth extends PureComponent {
                 touched: false
             }  
         },
-        isSignup: true
+        isSignup: true,
+        isFormValid: false
     };
 
     checkForEmptyIngredients = () => {
@@ -75,8 +76,16 @@ class Auth extends PureComponent {
                 })
         });
         
-        
-        this.setState({controls: updatedControls});  
+       let isFormValid = true;
+
+       for (let control in updatedControls) {
+           if (!updatedControls[control].valid) {
+               isFormValid = false;
+               break;
+           }
+       }
+        console.log(isFormValid);
+        this.setState({controls: updatedControls, isFormValid: isFormValid});  
     }
 
     
@@ -144,9 +153,12 @@ class Auth extends PureComponent {
             {errorMessage}
             <form onSubmit={this.submitHandler}>
             {form}
-            <Button btnType="Success">SUBMIT </Button>
+            <Button btnType="Success"
+            disabled={!this.state.isFormValid}
+            >SUBMIT </Button>
             </form>
-            <Button btnType="Danger" clicked={this.switchAuthModeHandler}>
+            <Button btnType="Danger" 
+            clicked={this.switchAuthModeHandler}>
                 SWITCH TO {this.state.isSignup ? "SIGN IN" : "SIGN UP"}</Button>
             </div>
         );
