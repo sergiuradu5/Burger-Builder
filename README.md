@@ -2,6 +2,9 @@
 
 This project was a follow-along coding practice for the React -The Complete Guide (2021 Edition), by Maximilian Schwarzmüller.
 
+##[Demo of The Application](https://react-burger-builder-svr.web.app/)
+[Click here](https://react-burger-builder-svr.web.app/) in order to try my burger builder app!
+
 ## Functionalities:
 
 ✔️ Easily Build a Custom Burger With The Burger Building Interface \
@@ -21,4 +24,4 @@ Over the duration of this complete course for React.js I have learned the follow
 • Basic `redux` And Some Advanced Uses, Like Applying Middleware (`redux devtools`), Handling Async Code (`redux thunk`) \
 • Authentication In SPA Via Tokens \
 • Testing \
-• Deployment
+• Deployment on Firebase
