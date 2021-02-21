@@ -2,7 +2,7 @@
 
 This project was a follow-along coding practice for the React -The Complete Guide (2021 Edition), by Maximilian Schwarzmüller.
 
-[##Demo of The Application](https://react-burger-builder-svr.web.app/)
+## [Demo of The Application](https://react-burger-builder-svr.web.app/)
 [Click here](https://react-burger-builder-svr.web.app/) in order to try my burger builder app!
 
 ## Functionalities:
