@@ -4,6 +4,13 @@ import API_KEY from '../../helpers/APIKey/APIKey';
 
 import {ToastNotification} from '../../components//UI/ToastNotification/ToastNotification';
 
+//A method for resetting previous userContactData
+export const resetUserContactData = () => {
+    return {
+        type: actionTypes.RESET_USER_CONTACT_DATA
+    }
+}
+
 export const authStart = () => {
     return {
         type: actionTypes.AUTH_START
@@ -89,18 +96,25 @@ export const logout = (auto) => {
     }
 }
 
+export const logoutAndResetUserContactData = (auto) => {
+    return dispatch => {
+        dispatch(resetUserContactData());
+        dispatch(logout(auto));
+    }
+}
+
 
 export const checkAuthTimeout = (expirationTime) => {
     return dispatch => {
         setTimeout(() =>{
-            dispatch(logout());      
+            dispatch(logoutAndResetUserContactData());      
         }, expirationTime);    
     }
 }
 
 export const auth = (email, password, method) => {
     return dispatch => {
-
+        
         dispatch(authStart());
         const authData = {
             email: email,
@@ -157,10 +171,11 @@ export const setAuthRedirectPath = (path) => {
 
 export const authCheckState = () => {
     return dispatch => {
+        
         const auto=true;
         const token = localStorage.getItem('token');
         if(!token) {
-            dispatch(logout());
+            dispatch(logoutAndResetUserContactData());
         } else {
             const expirationDate = new Date(localStorage.getItem('expirationDate'));
             
@@ -171,7 +186,7 @@ export const authCheckState = () => {
                 dispatch(checkAuthTimeout(expirationDate.getTime() - new Date().getTime()));
                                     //both expirationDate and current Date have to be in milliseconds
               } else {
-                  dispatch(logout(auto))
+                  dispatch(logoutAndResetUserContactData(auto))
               }
 
             

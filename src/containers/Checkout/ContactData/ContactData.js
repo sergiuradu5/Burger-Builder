@@ -81,10 +81,11 @@ class ContactData extends PureComponent {
 
   componentDidMount() {
     this.props.onFetchUserContactDataStart(
-      this.props.token,
-      this.props.userId
+      localStorage.getItem('token'),
+      localStorage.getItem('userId')
     )
   }
+
 
   autoCompleteForm = () => {
     const keys = Object.keys(this.state.orderForm);

@@ -15,7 +15,7 @@ class Logout extends PureComponent {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onLogout: (auto) => dispatch(actions.logout(auto))
+        onLogout: (auto) => dispatch(actions.logoutAndResetUserContactData(auto))
     }
 }
 
