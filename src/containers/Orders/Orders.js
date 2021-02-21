@@ -18,7 +18,14 @@ class Orders extends Component {
     render() {
         
         let orders = <Spinner />;
-        if (!this.props.loading) {
+
+        if(!this.props.loading && this.props.orders.length===0){
+            orders = <div style={{textAlign: 'center', marginTop: '50px'}}>
+                <h4>You haven't made any orders yet</h4>
+            </div>
+        }
+
+        if (!this.props.loading && this.props.orders.length) {
             orders = this.props.orders.map(object => {
                     return (
                      <Order key={object.id}
