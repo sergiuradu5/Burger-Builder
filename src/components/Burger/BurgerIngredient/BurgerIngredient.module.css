@@ -1,3 +1,11 @@
+.InnerIngredientsContainer{
+    width: 100%;
+    margin-top: -300px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 .BreadBottom {
     height: 13%;
     width: 80%;

@@ -2,7 +2,7 @@ import React from 'react';
 import {withRouter} from 'react-router-dom';
 import classes from './Burger.module.css';
 import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
-
+import DraggableList from '../UI/DraggableList/DraggableList';
 const burger = ( props ) => {
     let transformedIngredients = Object.keys( props.ingredients )
         .map( igKey => {
@@ -17,11 +17,15 @@ const burger = ( props ) => {
         transformedIngredients = <p>Please start adding ingredients!</p>;
     }
     return (
+    <React.Fragment>
         <div className={classes.Burger}>
             <BurgerIngredient type="bread-top" />
-            {transformedIngredients}
+            <DraggableList/>
             <BurgerIngredient type="bread-bottom" />
+            
         </div>
+        
+    </React.Fragment>
     );
 };
 
