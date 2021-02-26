@@ -21,7 +21,7 @@ Over the duration of this complete course for React.js I have learned the follow
 • POSTing and GETting Data From Server with `axios`, Adding Interceptors & Error Handling \
 • Routing with `react-router`, Guards, and Lazy Loading of pages \
 • Creating Forms, Implementing Validation - Both Manually, And Using Thrid-Party Libraries Such As `formik` & `yup` \
-• Basic `redux` And Some Advanced Uses, Like Applying Middleware (`redux devtools`), Handling Async Code (`redux thunk`) \
+• Basic `redux` And Some Advanced Uses, Like Applying Middleware (`redux devtools`), Handling Async Code (both in `redux thunk` & `redux-saga`) \
 • Authentication In SPA Via Tokens \
 • Testing \
 • Deployment on Firebase
