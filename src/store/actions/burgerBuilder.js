@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-import axios from '../../axios-orders';
 
 export const addIngredient = (ingredientName) => {
     return {
@@ -29,15 +28,9 @@ export const fetchIngredientsFailed = () => {
 }
 
 export const initIngredients = () => {
-    return dispatch => {
-                axios.get('https://react-burger-builder-svr-default-rtdb.europe-west1.firebasedatabase.app/ingredients.json')
-                    .then(response => {
-                        dispatch(setIngredients(response.data)); 
-                    })
-                    .catch( error => {
-                        dispatch(fetchIngredientsFailed());
-                    })
-    };
+    return {
+        type: actionTypes.INIT_INGREDIENTS
+    }
 };
 
 export const fetchIngredientPricesFailed = (error) => {
@@ -55,13 +48,7 @@ export const fetchIngredientPricesSuccess = (prices) => {
 }
 
 export const fetchIngredientPrices = () => {
-    return dispatch => {
-        axios.get('/prices.json')
-            .then( response => {
-                dispatch(fetchIngredientPricesSuccess(response.data));
-            })
-            .catch(error => {
-                dispatch(fetchIngredientPricesFailed(error));
-            })
+    return {
+        type: actionTypes.FETCH_INGREDIENT_PRICES
     }
 }

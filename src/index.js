@@ -5,12 +5,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
 import thunk from 'redux-thunk';
+import createSagaMiddleware from 'redux-saga'; 
+
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import burgerBuilderReducer from './store/reducers/burgerBuilder';
 import orderReducer from './store/reducers/order';
 import authReducer from './store/reducers/auth';
 import userContactDataReducer from './store/reducers/userContactData';
+
+//Saga Watchers
+import { watchAuth, watchBurgerBuilder, watchOrder } from './store/sagas/index';
+
 
 //ToastNotification
 import ReactNotification from 'react-notifications-component'
@@ -24,9 +30,15 @@ const rootReducer = combineReducers({ //Combining the 2 reducers
 });
 
 
+const sagaMiddleware = createSagaMiddleware();
+
 const composeEnhancers = process.env.NODE_ENV === 'development' ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ : null || compose;
 
-const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk)));
+const store = createStore(rootReducer, composeEnhancers(applyMiddleware(thunk, sagaMiddleware)));
+
+sagaMiddleware.run(watchAuth);
+sagaMiddleware.run(watchBurgerBuilder);
+sagaMiddleware.run(watchOrder);
 
 const app = (
   <Provider store={store}>

@@ -86,6 +86,14 @@ class ContactData extends PureComponent {
     )
   }
 
+  checkEntireFormValidity = (updatedOrderForm) =>  {
+    let formIsValid = true;
+     for (let inputIdentifier in updatedOrderForm)
+     {
+       formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+     }
+     return formIsValid;
+  }
 
   autoCompleteForm = () => {
     const keys = Object.keys(this.state.orderForm);
@@ -98,9 +106,12 @@ class ContactData extends PureComponent {
         touched:  true
       });
     }
+
+    let formIsValid = this.checkEntireFormValidity(autoCompletedForm);
     
     this.setState({
       orderForm: autoCompletedForm,
+      formIsValid: formIsValid,
       autoCompleteClicked: true,
       resetClicked: false
     });
@@ -120,7 +131,8 @@ class ContactData extends PureComponent {
     this.setState({
       orderForm: resetForm,
       autoCompleteClicked: false,
-      resetClicked: true
+      resetClicked: true,
+      formIsValid: false
     });
   }
 
@@ -159,11 +171,7 @@ class ContactData extends PureComponent {
      });
      
      
-     let formIsValid = true;
-     for (let inputIdentifier in updatedOrderForm)
-     {
-       formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
-     }
+     let formIsValid = this.checkEntireFormValidity(updatedOrderForm);
 
      this.setState({
        orderForm: updatedOrderForm, formIsValid: formIsValid
