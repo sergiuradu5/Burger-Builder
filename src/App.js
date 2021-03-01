@@ -1,4 +1,5 @@
-import React, { Component, Suspense } from 'react';
+import React, {useEffect} from 'react';
+import {Suspense} from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 
 import {connect} from 'react-redux';
@@ -16,15 +17,11 @@ const Auth = React.lazy( () => import ('./containers/Auth/Auth'));
 const Orders = React.lazy( () => import ('./containers/Orders/Orders'));
 
 
-class App extends Component {
-
-  componentDidMount() {
-    this.props.onTryAutoSignUp();
-  }
+const App = (props) => {
+  useEffect(() => {
+    props.onTryAutoSignUp();
+  })
   
-
-  render () {
-
     let routes = ( //for Authenticated users
       // <Suspense /> Used here for asynchronous (lazy) loading of the componentes
           <Switch>
@@ -49,7 +46,7 @@ class App extends Component {
           </Switch>
     )
 
-    if (!this.props.isAuthenticated) {
+    if (!props.isAuthenticated) {
       routes = ( //for Unauthenticated users
         <Switch>
             <Route path="/burger" component={BurgerBuilder} />
@@ -72,7 +69,6 @@ class App extends Component {
         
       
     );
-  }
 }
 
 const mapStateToProps = (state) => {
