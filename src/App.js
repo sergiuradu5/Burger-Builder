@@ -15,7 +15,7 @@ import Spinner from './components/UI/Spinner/Spinner';
 const Checkout = React.lazy( () => import('./containers/Checkout/Checkout'));
 const Auth = React.lazy( () => import ('./containers/Auth/Auth'));
 const Orders = React.lazy( () => import ('./containers/Orders/Orders'));
-
+const BurgerCSS = React.lazy( () => import('./components/Burger/BurgerIngredient/BurgerCSSBuild/BurgerCSSBuild'));
 
 const App = (props) => {
 
@@ -45,6 +45,11 @@ const App = (props) => {
                 <Auth {...props}/>
               </Suspense>
             )} />
+            <Route path="/burger-css" exact render={(props) => (
+              <Suspense>
+                <BurgerCSS {...props}/>
+              </Suspense>
+            )}/>
             <Redirect path="/" to="/burger" />
           </Switch>
     )
@@ -58,6 +63,11 @@ const App = (props) => {
                 <Auth {...props}/>
               </Suspense>
             )} />
+            <Route path="/burger-css" render={(props) => (
+              <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
+                <BurgerCSS {...props}/>
+              </Suspense>
+            )}/>
             <Redirect path="/" to="/burger" />
           </Switch>
       )
