@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect} from 'react';  
 import {Suspense} from 'react';
 import { Route, Redirect, Switch, withRouter } from 'react-router-dom';
 
@@ -18,28 +18,31 @@ const Orders = React.lazy( () => import ('./containers/Orders/Orders'));
 
 
 const App = (props) => {
+
+  const { onTryAutoSignUp } = props; //object destructuring
   useEffect(() => {
     props.onTryAutoSignUp();
-  })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onTryAutoSignUp])
   
     let routes = ( //for Authenticated users
       // <Suspense /> Used here for asynchronous (lazy) loading of the componentes
           <Switch>
-            <Route path="/burger" component={BurgerBuilder} />
-            <Route path="/checkout" render={() => (
+            <Route path="/burger" render={(props) => <BurgerBuilder {...props}/>} />
+            <Route path="/checkout" render={(props) => (
               <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
-                <Checkout />
+                <Checkout {...props}/>
               </Suspense>
             )} />
-            <Route path="/orders" render={() => (
+            <Route path="/orders" render={(props) => (
               <Suspense fallback={<div> </div>}>
-                <Orders />
+                <Orders {...props}/>
               </Suspense>
             )} />
-            <Route path="/logout" component={Logout} />
-            <Route path="/auth" render={() => (
+            <Route path="/logout" render={(props) => <Logout {...props}/>} />
+            <Route path="/auth" render={(props) => (
               <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
-                <Auth />
+                <Auth {...props}/>
               </Suspense>
             )} />
             <Redirect path="/" to="/burger" />
@@ -49,10 +52,10 @@ const App = (props) => {
     if (!props.isAuthenticated) {
       routes = ( //for Unauthenticated users
         <Switch>
-            <Route path="/burger" component={BurgerBuilder} />
-            <Route path="/auth" render={() => (
+            <Route path="/burger" render={(props) => <BurgerBuilder {...props}/>} />
+            <Route path="/auth" render={(props) => (
               <Suspense fallback={<div style={{align: 'center'}}> <Spinner /></div>}>
-                <Auth />
+                <Auth {...props}/>
               </Suspense>
             )} />
             <Redirect path="/" to="/burger" />

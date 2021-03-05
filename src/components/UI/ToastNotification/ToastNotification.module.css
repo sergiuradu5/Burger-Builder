@@ -1,0 +1,9 @@
+.ToastNotificationMobile {
+
+}
+
+@media (max-width: 500px) {
+    .ToastNotificationMobile {
+        margin-top: -60px;
+    }
+}

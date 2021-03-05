@@ -35,7 +35,6 @@ export const fetchUserContactDataStart = (token, userId) => {
             const contactData = {
                 ...sortedOrders[0].orderData //Choosing the first nested object from the sortedOrders object
             }
-            console.log('Contact Data from latest order: ', contactData);
            
             dispatch(fetchUserContactDataSuccess(contactData));
         })

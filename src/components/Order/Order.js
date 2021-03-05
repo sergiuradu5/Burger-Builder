@@ -21,7 +21,7 @@ const Order = (props) => {
     }); 
     
     const date=new Date(props.date);
-    const dateOutput = `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
+    const dateOutput = `${date.getDate()}.${date.getMonth()+1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes()}`;
    
     
     return (

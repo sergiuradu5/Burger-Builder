@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from '../../axios-orders';
 
-import {connect} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import * as actionCreators from '../../store/actions/index';
 
 import Auxilary from '../../hoc/Auxiliary/Auxiliary';
@@ -13,26 +13,46 @@ import Spinner from '../../components/UI/Spinner/Spinner';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
  
-export class BurgerBuilder extends Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {...}
-    // }
-    state = {
-        purchasing: false,
-    }
+export const BurgerBuilder = (props) => {
+    
+    const [purchasing, setPurchasing] = useState(false);
 
-    componentDidMount() {
-        /* We now want to retreive the ingredients asynchronously from the firebase server, 
+    const dispatch = useDispatch();
+
+    const ings = useSelector(state => {
+        return state.burgerBuilder.ingredients
+    });
+    const price = useSelector(state => {
+        return state.burgerBuilder.totalPrice
+    })
+    const error = useSelector(state => {
+        return state.burgerBuilder.error
+    })
+    const isAuthenticated = useSelector(state =>{
+        return state.auth.token !== null
+    })
+
+  
+    const onIngredientAdded = (ingredientName) => dispatch(actionCreators.addIngredient(ingredientName));
+    const onIngredientRemoved = (ingredientName) => dispatch(actionCreators.removeIngredient(ingredientName));
+    const onInitIngredients =  useCallback(
+        () => dispatch(actionCreators.initIngredients()), [dispatch]);
+    const onFetchIngredientPrices = useCallback(
+        () => dispatch(actionCreators.fetchIngredientPrices()), [dispatch]); 
+    const onInitPurchase  = () => dispatch(actionCreators.purchaseInit());
+    const onSetAuthRedirectPath = (path) => dispatch(actionCreators.setAuthRedirectPath(path))
+
+    useEffect(() => {
+        /* We now want to retreive the ingredients asynchronously from the firebase server; 
         within the Action Creators by using redux thunk */
-        this.props.onInitIngredients();
-        this.props.onFetchIngredientPrices();
-    }
+        onInitIngredients();
+        onFetchIngredientPrices();
+    }, [onInitIngredients, onFetchIngredientPrices]);
 
-    updatePurchaseState () {
-        const sum = Object.keys( this.props.ings )
+    const updatePurchaseState = () => {
+        const sum = Object.keys( ings )
             .map( igKey => {
-                return this.props.ings[igKey];
+                return ings[igKey];
             } )
             .reduce( ( sum, el ) => {
                 return sum + el;
@@ -41,31 +61,31 @@ export class BurgerBuilder extends Component {
     }
 
     
-    purchaseHandler = () => {
-        if(this.props.isAuthenticated) {
-            this.setState({purchasing: true});
+   const purchaseHandler = () => {
+        if(isAuthenticated) {
+            setPurchasing(true);
         } else {
-            this.props.onSetAuthRedirectPath('/checkout');
-            this.props.history.push('/auth');
+            onSetAuthRedirectPath('/checkout');
+            props.history.push('/auth');
         }
         
     }
 
     
 
-    purchaseCancelHandler = () => {
-        this.setState({purchasing: false});
+   const purchaseCancelHandler = () => {
+        setPurchasing(false);
     }
 
-    purchaseContinueHandler = () => {        
-        this.props.onInitPurchase();
-        this.props.history.push('/checkout');
+    const purchaseContinueHandler = () => {        
+        onInitPurchase();
+        props.history.push('/checkout');
     }
 
-    render () {
+    
         //Info about what buttons should be disabled inside the <BuildControls />
         const disabledInfo = {
-            ...this.props.ings
+            ...ings
         };
         for ( let key in disabledInfo ) {
             disabledInfo[key] = disabledInfo[key] <= 0
@@ -78,27 +98,27 @@ export class BurgerBuilder extends Component {
         //
 
         /*Until the ingredients are retreived from the backend, 
-        we are displaying a Spinner for the components using this.state.ingredients*/
-        let burger = this.props.error ? <h2 style={{textAlign: 'center'}}>Ingredients Can't Be loaded</h2> : <Spinner />;
-        if (this.props.ings) { 
+        we are displaying a Spinner for the components using state.ingredients*/
+        let burger = error ? <h2 style={{textAlign: 'center'}}>Ingredients Can't Be loaded</h2> : <Spinner />;
+        if (ings) { 
             burger = (
                 <Auxilary>
-                <Burger ingredients={this.props.ings} />
+                <Burger ingredients={ings} />
                 <BuildControls
-                ingredientAdded={this.props.onIngredientAdded}
-                ingredientRemoved={this.props.onIngredientRemoved}
+                ingredientAdded={onIngredientAdded}
+                ingredientRemoved={onIngredientRemoved}
                 disabled={disabledInfo}
-                purchasable={this.updatePurchaseState()}
-                price={this.props.price} 
-                ordered={this.purchaseHandler}
-                isAuth={this.props.isAuthenticated}/>
+                purchasable={updatePurchaseState()}
+                price={price} 
+                ordered={purchaseHandler}
+                isAuth={isAuthenticated}/>
                 </Auxilary>);
 
             orderSummary = <OrderSummary 
-            ingredients={this.props.ings}
-            price={this.props.price}
-            purchaseCancelled={this.purchaseCancelHandler}
-            purchaseContinued={this.purchaseContinueHandler} />
+            ingredients={ings}
+            price={price}
+            purchaseCancelled={purchaseCancelHandler}
+            purchaseContinued={purchaseContinueHandler} />
         }
         /*****/
         
@@ -106,34 +126,13 @@ export class BurgerBuilder extends Component {
         
         return (
             <Auxilary>
-                <Modal show={this.state.purchasing} modalClosed={this.purchaseCancelHandler}>
+                <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
                    {orderSummary}
                 </Modal>
                 {burger}
             </Auxilary>
         );
-    }
 }
 
-const mapStateToProps = (state) => {
-    return {
-        ings: state.burgerBuilder.ingredients,
-        price: state.burgerBuilder.totalPrice,
-        error: state.burgerBuilder.error,
-        isAuthenticated: state.auth.token !== null
-    }
-}
 
-const mapDispatchToProps = (dispatch) => {
-    return {
-        onIngredientAdded: (ingredientName) => dispatch(actionCreators.addIngredient(ingredientName)),
-        onIngredientRemoved: (ingredientName) => dispatch(actionCreators.removeIngredient(ingredientName)),
-        onInitIngredients: () => dispatch(actionCreators.initIngredients()),
-        onFetchIngredientPrices: () => dispatch(actionCreators.fetchIngredientPrices()),
-        onInitPurchase : () => dispatch(actionCreators.purchaseInit()),
-        onSetAuthRedirectPath: (path) => dispatch(actionCreators.setAuthRedirectPath(path))
-        
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(BurgerBuilder, axios));
+export default withErrorHandler(BurgerBuilder, axios);

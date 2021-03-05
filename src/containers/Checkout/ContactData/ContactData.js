@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { useState, useEffect } from "react";
 import classes from "./ContactData.module.css";
 
 import axios from "../../../axios-orders";
@@ -14,79 +14,77 @@ import {connect} from 'react-redux';
 import * as actionCreators from '../../../store/actions/index';
 
 
-class ContactData extends PureComponent {
-  state = {
-    orderForm: {
-        name: {
-          elementType: 'input',
-          elementConfig: {
-            type: 'text',
-            placeholder: 'Your Name'
-          },
-          value: '',
-          validation: {
-            required: true
-          },
-          valid: false,
-          touched: false
-        },
-        surname: jsConfigForm("input", "text", "Your Surname", "", "required"),
-        email: {
-          elementType: 'input',
-          elementConfig: {
-            type: 'email',
-            placeholder: 'Email Address'
-          },
-          value: '',
-          validation: {
-            required: true, 
-            isEmail: true
-          },
-          valid: false,
-          touched: false
-        },
-        country: jsConfigForm("input", "text", "Your Country", "", "required"),
-        address: jsConfigForm("input", "text", "Street Address", "", "required"),
-        postalCode: {
-          elementType: 'input',
-          elementConfig: {
-            type: 'text',
-            placeholder: 'Postal Code'
-          },
-          value: '',
-          validation: {
-            minLength: 6,
-            maxLength: 6
-          },
-          valid: false,
-          touched: false
-        },
-        deliveryMethod: {
-          elementType: 'select',
-          elementConfig: {
-            options: [
-              {value: 'fastest', displayValue: 'Fastest '},
-              {value: 'cheapest', displayValue: 'Cheapest '},
-            ]
-          },
-          value: 'fastest',
-          valid: true,
-          validation: {}
-        }
+const ContactData =  (props) => {
+  const [autoCompleteClicked, setAutoCompleteClicked] = useState(false);
+  const [resetClicked, setResetClicked] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(false);
+  const [ orderForm, setOrderForm] = useState({
+    name: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Your Name'
+      },
+      value: '',
+      validation: {
+        required: true
+      },
+      valid: false,
+      touched: false
     },
-    formIsValid: false,
-    resetClicked: false,
-    autoCompleteClicked: false,
-  };
+    surname: jsConfigForm("input", "text", "Your Surname", "", "required"),
+    email: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'email',
+        placeholder: 'Email Address'
+      },
+      value: '',
+      validation: {
+        required: true, 
+        isEmail: true
+      },
+      valid: false,
+      touched: false
+    },
+    country: jsConfigForm("input", "text", "Your Country", "", "required"),
+    address: jsConfigForm("input", "text", "Street Address", "", "required"),
+    postalCode: {
+      elementType: 'input',
+      elementConfig: {
+        type: 'text',
+        placeholder: 'Postal Code'
+      },
+      value: '',
+      validation: {
+        minLength: 6,
+        maxLength: 6
+      },
+      valid: false,
+      touched: false
+    },
+    deliveryMethod: {
+      elementType: 'select',
+      elementConfig: {
+        options: [
+          {value: 'fastest', displayValue: 'Fastest '},
+          {value: 'cheapest', displayValue: 'Cheapest '},
+        ]
+      },
+      value: 'fastest',
+      valid: true,
+      validation: {}
+    }
+  })
 
-  componentDidMount() {
-    this.props.onFetchUserContactDataStart(
+  useEffect(() => {
+    props.onFetchUserContactDataStart(
       localStorage.getItem('token'),
       localStorage.getItem('userId')
     )
-  }
+  }, []);
 
-  checkEntireFormValidity = (updatedOrderForm) =>  {
+  const checkEntireFormValidity = (updatedOrderForm) =>  {
     let formIsValid = true;
      for (let inputIdentifier in updatedOrderForm)
      {
@@ -95,101 +93,96 @@ class ContactData extends PureComponent {
      return formIsValid;
   }
 
-  autoCompleteForm = () => {
-    const keys = Object.keys(this.state.orderForm);
+  const autoCompleteForm = () => {
+    const keys = Object.keys(orderForm);
     let autoCompletedForm = {};
       for (const key of keys){
-        console.log('This is key: ', key);
-        autoCompletedForm[key] = updateObject(this.state.orderForm[key], {
-        value: this.props.contactData[key],
-        valid: checkValidity(this.props.contactData[key], this.state.orderForm[key].validation),
+        autoCompletedForm[key] = updateObject(orderForm[key], {
+        value: props.contactData[key],
+        valid: checkValidity(props.contactData[key], orderForm[key].validation),
         touched:  true
       });
     }
 
-    let formIsValid = this.checkEntireFormValidity(autoCompletedForm);
-    
-    this.setState({
-      orderForm: autoCompletedForm,
-      formIsValid: formIsValid,
-      autoCompleteClicked: true,
-      resetClicked: false
-    });
+    let formIsValid = checkEntireFormValidity(autoCompletedForm);
+    setOrderForm(autoCompletedForm);
+    setFormIsValid(formIsValid);
+    setAutoCompleteClicked(true);
+    setResetClicked(false);
   }
 
-  resetForm = () => {
-    const keys = Object.keys(this.state.orderForm);
+  const resetForm = () => {
+    const keys = Object.keys(orderForm);
     let resetForm = {};
       for (const key of keys){
-        console.log('This is key: ', key);
-        resetForm[key] = updateObject(this.state.orderForm[key], {
+        resetForm[key] = updateObject(orderForm[key], {
         value: '',
         valid: false,
         touched:  false
       });
     }
-    this.setState({
-      orderForm: resetForm,
-      autoCompleteClicked: false,
-      resetClicked: true,
-      formIsValid: false
-    });
+    
+      setOrderForm(resetForm);
+      setAutoCompleteClicked(false);
+      setResetClicked(true);
+      setFormIsValid(false);
+    
   }
 
-  orderHandler = (event) => {
+  const orderHandler = (event) => {
     event.preventDefault();
     const formData = {};
-    for (let formElementIdentifier in this.state.orderForm) {
+    for (let formElementIdentifier in orderForm) {
       //Creating key-value pairs, like the following: {name: "Max", email: "max@max.com"}
-      formData[formElementIdentifier] = this.state.orderForm[formElementIdentifier].value;
+      formData[formElementIdentifier] = orderForm[formElementIdentifier].value;
     }
 
-    this.setState({ loading: true });
+    
     const order = {
-      ingredients: this.props.ings,
-      price: this.props.price.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
+      ingredients: props.ings,
+      price: props.price.toFixed(2), //in a real-world app, prices should be calculated in the server, not in the SPA
       orderData: formData,
-      userId: this.props.userId,
+      userId: props.userId,
       date: new Date()
     };
 
-    this.props.onOrderBurger(order, this.props.token);
+    props.onOrderBurger(order, props.token);
 
-    
   };
 
-  inputChangedHandler = (event, inputIdentifier) => {
+  const inputChangedHandler = (event, inputIdentifier) => {
      
-     const updatedFormElement = updateObject(this.state.orderForm[inputIdentifier], {
+     const updatedFormElement = updateObject(orderForm[inputIdentifier], {
         value: event.target.value,
-        valid: checkValidity(event.target.value, this.state.orderForm[inputIdentifier].validation),
+        valid: checkValidity(event.target.value, orderForm[inputIdentifier].validation),
         touched:  true
      });
 
-     const updatedOrderForm = updateObject(this.state.orderForm, {
+     const updatedOrderForm = updateObject(orderForm, {
        [inputIdentifier]: updatedFormElement
      });
      
      
-     let formIsValid = this.checkEntireFormValidity(updatedOrderForm);
+     let formIsValid = checkEntireFormValidity(updatedOrderForm);
 
-     this.setState({
-       orderForm: updatedOrderForm, formIsValid: formIsValid
-     })
+     
+     setOrderForm(updatedOrderForm);
+     setFormIsValid(formIsValid);
+    
   }
 
-  render() {
+  
     
 
     const formElementsArray = [];
-    for (let key in this.state.orderForm) {
+    for (let key in orderForm) {
       formElementsArray.push({
         id: key,
-        config: this.state.orderForm[key]
+        config: orderForm[key]
       })
     }
     let form = (
-        <form onSubmit ={this.orderHandler}>
+        <form onSubmit ={orderHandler}>
         {formElementsArray.map(formElement => (
            <Input key={formElement.id}
               elementType={formElement.config.elementType}
@@ -199,40 +192,38 @@ class ContactData extends PureComponent {
               shouldValidate={formElement.config.validation}
               invalid={!formElement.config.valid}
               touched={formElement.config.touched}
-              changed={(event) => this.inputChangedHandler(event, formElement.id)}/>
+              changed={(event) => inputChangedHandler(event, formElement.id)}/>
         ))}
         <Button btnType="Success"
-          disabled={!this.state.formIsValid}>
+          disabled={!formIsValid}>
           ORDER
         </Button>
       </form>
     );
-    if (this.props.loading) {
+    if (props.loading) {
         form = <Spinner />
     }
 
     let resetButton = null;
-    if (!this.state.resetClicked && this.state.autoCompleteClicked && this.props.previousContactData) {
+    if (!resetClicked && autoCompleteClicked && props.previousContactData) {
       resetButton = <div>
       <button 
             className={classes.Button}
-            onClick={this.resetForm}>RESET</button>
+            onClick={resetForm}>RESET</button>
         <h5>Click here if you want to reset and empty your form</h5>
     </div>
     }
 
     let autoCompleteButton = null;
-    if (this.props.contactData && !this.state.autoCompleteClicked && this.props.previousContactData) {
+    if (props.contactData && !autoCompleteClicked && props.previousContactData) {
       autoCompleteButton = 
       <div>
         <button 
             className={classes.Button}
-            onClick={this.autoCompleteForm}>AUTO-COMPLETE</button>
+            onClick={autoCompleteForm}>AUTO-COMPLETE</button>
         <h5>Click here if you want to auto-complete your order with your contact data from the previous order</h5>
     </div>
-
     }
-
 
     return (
     <div className={classes.ContactData}>
@@ -242,7 +233,6 @@ class ContactData extends PureComponent {
         {form}
     </div>
     );
-  }
 }
 
 const mapStateToProps = (state) => {

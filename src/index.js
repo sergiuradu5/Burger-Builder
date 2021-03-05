@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from 'react-router-dom';
@@ -20,6 +21,7 @@ import { watchAuth, watchBurgerBuilder, watchOrder } from './store/sagas/index';
 
 //ToastNotification
 import ReactNotification from 'react-notifications-component'
+import toastNotificationClasses from './components/UI/ToastNotification/ToastNotification.module.css';
 import 'react-notifications-component/dist/theme.css'
 
 const rootReducer = combineReducers({ //Combining the 2 reducers
@@ -40,10 +42,17 @@ sagaMiddleware.run(watchAuth);
 sagaMiddleware.run(watchBurgerBuilder);
 sagaMiddleware.run(watchOrder);
 
+//
+let intFrameWidth = window.innerWidth;
+  let isMobile = false;
+  if (intFrameWidth < 500) {
+    isMobile= true;
+  }
+
 const app = (
   <Provider store={store}>
     <BrowserRouter >
-      <ReactNotification />
+      <ReactNotification isMobile breakpoint={758} className={isMobile ? toastNotificationClasses.ToastNotificationMobile : ""}/>
         <App />
     </BrowserRouter>
   </Provider>

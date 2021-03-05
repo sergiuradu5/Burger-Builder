@@ -20,7 +20,6 @@ export function* fetchOrdersSaga(action){
            
         const fetchedOrders = [];
         for (let key in response.data) {
-            console.log(response.data[key]);
             fetchedOrders.push({
                 ...response.data[key],
                 id: key
